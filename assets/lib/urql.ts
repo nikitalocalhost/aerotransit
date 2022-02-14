@@ -11,10 +11,7 @@ import {
 } from 'urql'
 
 const SERVER_URL =
-	(import.meta.env.SERVER_URL === true
-		? false
-		: import.meta.env.SERVER_URL) ||
-	`${location.protocol}//${location.host}/`
+	import.meta.env.SERVER_URL || `${location.protocol}//${location.host}/`
 
 import { multipartFetchExchange } from '@urql/exchange-multipart-fetch'
 import { authExchange } from '@/lib/auth'

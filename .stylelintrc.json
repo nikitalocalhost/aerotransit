@@ -2,7 +2,6 @@
 	"extends": [
 		"stylelint-config-recommended",
 		"stylelint-config-standard",
-		"stylelint-config-idiomatic-order",
 		"stylelint-prettier/recommended"
 	],
 	"plugins": ["stylelint-order"],
@@ -14,13 +13,11 @@
 			"rules",
 			"at-rules"
 		],
-
 		"at-rule-no-vendor-prefix": true,
 		"media-feature-name-no-vendor-prefix": true,
 		"property-no-vendor-prefix": true,
 		"selector-no-vendor-prefix": true,
 		"value-no-vendor-prefix": true,
-
 		"at-rule-no-unknown": [
 			true,
 			{

@@ -3,16 +3,27 @@ defmodule AerotransitWeb.Schema do
 
   use Absinthe.Schema
 
-  object :post do
-    field :id, :id
-    field :title, :string
-    field :body, :string
-  end
+  import_types(AerotransitWeb.Schema.Accounts)
+
+  alias Aerotransit.{Accounts}
 
   query do
-    @desc "Get all posts"
-    field :posts, list_of(:post) do
-      resolve(&Resolvers.Content.list_posts/3)
-    end
+    import_fields(:account_queries)
+  end
+
+  mutation do
+    import_fields(:account_mutations)
+  end
+
+  def context(ctx) do
+    loader =
+      Dataloader.new()
+      |> Dataloader.add_source(Accounts, Accounts.data())
+
+    Map.put(ctx, :loader, loader)
+  end
+
+  def plugins do
+    [Absinthe.Middleware.Dataloader] ++ Absinthe.Plugin.defaults()
   end
 end

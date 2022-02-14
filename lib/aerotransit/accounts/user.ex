@@ -4,6 +4,8 @@ defmodule Aerotransit.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Aerotransit.Accounts
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "users" do
@@ -13,6 +15,34 @@ defmodule Aerotransit.Accounts.User do
     field :role, :binary_id
 
     timestamps()
+  end
+
+  @doc false
+  def verify_user(%{username: username, password: password}) do
+    case Accounts.get_user_by(username: username) do
+      nil ->
+        {:error, "Not fount"}
+
+      user ->
+        user
+        |> Argon2.check_pass(password)
+    end
+  end
+
+  def generate_tokens(%{id: id}) do
+    case Aerotransit.Token.generate_and_sign(%{"iss" => id}) do
+      {:ok, token, _claims} ->
+        case Aerotransit.Token.generate_and_sign(%{"iss" => id, "type" => "refresh"}) do
+          {:ok, refresh_token, _claims} ->
+            {:ok, %{token: token, refresh_token: refresh_token}}
+
+          _ ->
+            {:error, "Error while generating refresh token"}
+        end
+
+      _ ->
+        {:error, "Error while generating token"}
+    end
   end
 
   @doc false

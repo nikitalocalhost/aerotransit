@@ -55,6 +55,19 @@ if config_env() == :prod do
     ],
     secret_key_base: secret_key_base
 
+  key_pem =
+    System.get_env("KEY_PEM") ||
+      raise """
+      environment variable KEY_PEM is missing.
+      You can generate one by calling: openssl genrsa -out mykey.pem 4096
+      """
+
+  config :joken,
+    default_signer: [
+      signer_alg: "Ed25519",
+      key_pem: key_pem
+    ]
+
   # ## Using releases
   #
   # If you are doing OTP releases, you need to instruct Phoenix

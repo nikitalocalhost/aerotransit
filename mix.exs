@@ -20,7 +20,7 @@ defmodule Aerotransit.MixProject do
   def application do
     [
       mod: {Aerotransit.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:crypto, :logger, :runtime_tools]
     ]
   end
 
@@ -52,7 +52,10 @@ defmodule Aerotransit.MixProject do
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:absinthe, "~> 1.7"},
       {:absinthe_phoenix, "~> 2.0"},
-      {:argon2_elixir, "~> 3.0"}
+      {:dataloader, "~> 1.0"},
+      {:argon2_elixir, "~> 3.0"},
+      {:joken, "~> 2.4"},
+      {:uuid, "~> 1.1"}
     ]
   end
 

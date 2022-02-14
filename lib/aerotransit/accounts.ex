@@ -124,6 +124,38 @@ defmodule Aerotransit.Accounts do
 
   ## Examples
 
+      iex> get_user_by!(username: "admin")
+      %User{}
+
+      iex> get_user_by!(username: "qwerty")
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_user_by!(params), do: Repo.get_by!(User, params)
+
+  @doc """
+  Gets a single user.
+
+  Returns `nil` if the User does not exist.
+
+  ## Examples
+
+      iex> get_user_by(username: "admin")
+      %User{}
+
+      iex> get_user_by(username: "qwerty")
+      nil
+
+  """
+  def get_user_by(params), do: Repo.get_by(User, params)
+
+  @doc """
+  Gets a single user.
+
+  Raises `Ecto.NoResultsError` if the User does not exist.
+
+  ## Examples
+
       iex> get_user!(123)
       %User{}
 
@@ -132,6 +164,22 @@ defmodule Aerotransit.Accounts do
 
   """
   def get_user!(id), do: Repo.get!(User, id)
+
+  @doc """
+  Gets a single user.
+
+  Returns `nil` if the User does not exist.
+
+  ## Examples
+
+      iex> get_user(123)
+      %User{}
+
+      iex> get_user(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_user(id), do: Repo.get(User, id)
 
   @doc """
   Creates a user.
@@ -196,5 +244,16 @@ defmodule Aerotransit.Accounts do
   """
   def change_user(user = %User{}, attrs \\ %{}) do
     User.changeset(user, attrs)
+  end
+
+  def user_gen_tokens(user = %User{}) do
+  end
+
+  def data() do
+    Dataloader.Ecto.new(Aerotransit.Repo, query: &query/2)
+  end
+
+  def query(queryable, _params) do
+    queryable
   end
 end

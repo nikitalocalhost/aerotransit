@@ -4,8 +4,8 @@ defmodule Aerotransit.Repo.Migrations.CreateUsers do
   def change do
     create table(:users, primary_key: false) do
       add :id, :binary_id, primary_key: true
-      add :username, :string
-      add :password_hash, :string
+      add :username, :string, null: false
+      add :password_hash, :string, null: false
       add :role, references(:roles, on_delete: :nothing, type: :binary_id)
 
       timestamps()

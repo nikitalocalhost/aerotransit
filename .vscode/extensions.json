@@ -1,0 +1,18 @@
+{
+	"recommendations": [
+		"formulahendry.auto-rename-tag",
+		"naumovs.color-highlight",
+		"pantajoe.vscode-elixir-credo",
+		"ms-azuretools.vscode-docker",
+		"editorconfig.editorconfig",
+		"jakebecker.elixir-ls",
+		"dbaeumer.vscode-eslint",
+		"mrorz.language-gettext",
+		"graphql.vscode-graphql",
+		"phoenixframework.phoenix",
+		"esbenp.prettier-vscode",
+		"stylelint.vscode-stylelint",
+		"gruntfuggly.todo-tree",
+		"voorjaar.windicss-intellisense"
+	]
+}

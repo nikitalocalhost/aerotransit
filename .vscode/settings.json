@@ -1,0 +1,27 @@
+{
+	"files.exclude": {
+		"**/.git": true,
+		"**/.svn": true,
+		"**/.hg": true,
+		"**/CVS": true,
+		"**/.DS_Store": true,
+		"**/Thumbs.db": true,
+		"**/node_modules": true,
+		".gitignore": true,
+		"_build": true,
+		".elixir_ls": true,
+		"deps": true,
+		".credo.exs": true,
+		".formatter.exs": true,
+		"mix.lock": true,
+		".husky": true,
+		".editorconfig": true,
+		".eslintrc.json": true,
+		".lintstagedrc.json": true,
+		".prettierrc.json": true,
+		".stylelintrc.json": true,
+		"tsconfig.json": true,
+		"vite.config.ts": true,
+		"yarn.lock": true
+	}
+}

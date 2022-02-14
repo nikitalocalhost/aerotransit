@@ -1,0 +1,6 @@
+{
+	"$schema": "https://json.schemastore.org/lintstagedrc.schema.json",
+	"*.{js,jsx,ts,tsx}": "eslint",
+	"*.css": "stylelint",
+	"*.{json,yaml,md}": "prettier -c"
+}

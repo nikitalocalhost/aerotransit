@@ -7,10 +7,17 @@ test:
     services:
         - postgres:latest
 
+    variables:
+        POSTGRES_DB: $POSTGRES_DB
+        POSTGRES_USER: $POSTGRES_USER
+        POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+        POSTGRES_HOST_AUTH_METHOD: trust
+
     before_script:
         - mix local.rebar --force
         - mix local.hex --force
         - mix deps.get
+        - DATABASE_URL=ecto://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost/$POSTGRES_DB
 
     script:
         - mix test

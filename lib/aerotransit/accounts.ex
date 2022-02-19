@@ -246,7 +246,41 @@ defmodule Aerotransit.Accounts do
     User.changeset(user, attrs)
   end
 
-  def user_gen_tokens(user = %User{}) do
+  def verify_user(user = %User{}, password) do
+    user
+    |> Argon2.check_pass(password)
+  end
+
+  def user_generate_tokens(%User{id: id}) do
+    case Aerotransit.Token.generate_and_sign(%{"iss" => id}) do
+      {:ok, token, _claims} ->
+        case Aerotransit.Token.generate_and_sign(%{"iss" => id, "type" => "refresh"}) do
+          {:ok, refresh_token, _claims} ->
+            {:ok, %{token: token, refresh_token: refresh_token}}
+
+          _ ->
+            {:error, "Error while generating refresh token"}
+        end
+
+      _ ->
+        {:error, "Error while generating token"}
+    end
+  end
+
+  def user_auth(%{username: username, password: password}) do
+    case get_user_by(username: username) do
+      nil ->
+        {:error, "Password is wrong or user is not found"}
+
+      user ->
+        with {:ok, user} <- verify_user(user, password),
+             {:ok, tokens} <- user_generate_tokens(user) do
+          {:ok, %{user: user, tokens: tokens}}
+        else
+          _ ->
+            {:error, "Password is wrong or user is not found"}
+        end
+    end
   end
 
   def data() do

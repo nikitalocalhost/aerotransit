@@ -12,8 +12,9 @@
 
 alias Aerotransit.{Repo, Accounts}
 
-admin = Accounts.create_role(%{name: "admin", priveleges: ["read_all", "write_all"]})
-moderator = Accounts.create_role(%{name: "moderator", priveleges: ["read_all"]})
-user = Accounts.create_role(%{name: "user", priveleges: []})
+{:ok, admin} = Accounts.create_role(%{name: "admin", priveleges: ["read_all", "write_all"]})
+{:ok, moderator} = Accounts.create_role(%{name: "moderator", priveleges: ["read_all"]})
+{:ok, user} = Accounts.create_role(%{name: "user", priveleges: []})
 
-admin_user = Accounts.create_user(%{username: "admin", password: "admin", role: admin.id})
+{:ok, admin_user} =
+  Accounts.create_user(%{username: "admin", password: "admin", role_id: admin.id})

@@ -4,56 +4,66 @@ defmodule AerotransitWeb.Schema.Accounts do
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
   alias Aerotransit.Accounts
 
-  object :tokens do
-    field :token, :string
-    field :refresh_token, :string
-  end
-
   object :role do
-    field :id, :id
-    field :name, :string
-    field :priveleges, list_of(:string)
+    field(:id, non_null(:id))
+    field(:name, non_null(:string))
+    field(:priveleges, :string |> non_null |> list_of |> non_null)
   end
 
   input_object :user_auth do
-    field :username, non_null(:string)
-    field :password, non_null(:string)
+    field(:username, non_null(:string))
+    field(:password, non_null(:string))
   end
 
   object :user do
-    field :id, :id
-    field :username, :string
-    field :role, :role, resolve: dataloader(Accounts)
+    field(:id, non_null(:id))
+    field(:username, non_null(:string))
+    field(:role, non_null(:role), resolve: dataloader(Accounts))
+  end
+
+  object :tokens do
+    field(:token, non_null(:string))
+    field(:refresh_token, non_null(:string))
+  end
+
+  object :authorize do
+    field(:tokens, non_null(:tokens))
+    field(:user, non_null(:user))
   end
 
   object :account_queries do
     field :user, :user do
       arg(:id, non_null(:id))
 
-      resolve(fn %{id: user_id}, _ ->
-        case Accounts.get_user(user_id) do
-          nil -> {:error, "Not found"}
-          user -> {:ok, user}
-        end
-      end)
+      resolve(fn %{id: user_id}, _ -> Accounts.get_user(user_id) end)
     end
   end
 
   object :account_mutations do
-    field :authorize, :tokens do
+    field :authorize, :authorize do
       arg(:user, non_null(:user_auth))
 
-      # resolve(fn _parent, %{user: user}, %{context: %{current_user: _current_user}} ->
       resolve(fn _parent, %{user: user}, _context ->
-        with {:ok, user} <- Accounts.User.verify_user(user),
-             {:ok, tokens} <- Accounts.User.generate_tokens(user) do
-          {:ok, tokens}
-        else
-          {:error, err} ->
-            {:error, "Password is wrong or user is not found"}
+        case Accounts.user_auth(user) do
+          {:ok, %{user: user, tokens: tokens}} ->
+            {:ok, %{user: user, tokens: tokens}}
 
           _ ->
             {:error, "Password is wrong or user is not found"}
+        end
+      end)
+    end
+
+    field :refresh_auth, :tokens do
+      arg(:refresh_token, non_null(:string))
+
+      resolve(fn _parent, %{refresh_token: refresh_token}, _context ->
+        with {:ok, %{"type" => "refresh", "iss" => iss}} <-
+               Aerotransit.Token.verify_and_validate(refresh_token),
+             {:ok, user} <- Accounts.get_user(iss) do
+          Accounts.user_generate_tokens(user)
+        else
+          _ -> {:error, "Refresh token is wrong"}
         end
       end)
     end

@@ -1,0 +1,31 @@
+overwrite: true
+schema: './schema.graphql'
+documents: 'assets/**/*.graphql'
+generates:
+    assets/schema/typed.ts:
+        plugins:
+            - 'typescript'
+            - 'typescript-operations'
+            - 'typed-document-node'
+        config:
+            nonOptionalTypename: true
+            dedupeFragments: true
+            useTypeImports: true
+            pureMagicComment: true
+
+    assets/schema/index.ts:
+        plugins:
+            - 'typescript'
+            - 'typescript-operations'
+            - 'typescript-urql'
+
+            - 'urql-introspection'
+        config:
+            withHooks: true
+            nonOptionalTypename: true
+            importOperationTypesFrom: 'Operations'
+            documentMode: external
+            importDocumentNodeExternallyFrom: '@/schema/typed'
+            dedupeFragments: true
+            useTypeImports: true
+            pureMagicComment: true

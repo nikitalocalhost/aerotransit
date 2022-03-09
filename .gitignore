@@ -34,3 +34,8 @@ node_modules
 dist
 dist-ssr
 *.local
+yarn-error.log
+
+/schema.graphql
+/assets/schema/index.ts
+/assets/schema/typed.ts

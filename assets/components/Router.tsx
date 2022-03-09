@@ -5,6 +5,7 @@ export const Router: FC<{ base: string }> = ({ base, children }) => {
 	const router = useRouter()
 	const [location] = useLocation()
 	const nestedBase = `${router.base}${base}`
+	console.log(nestedBase)
 
 	// don't render anything outside of the scope
 	if (!location.startsWith(nestedBase)) return null

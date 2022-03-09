@@ -22,12 +22,13 @@ defmodule Aerotransit.AccountsFixtures do
   @doc """
   Generate a user.
   """
-  def user_fixture(attrs \\ %{}) do
+  def user_fixture(attrs \\ %{}, role \\ role_fixture()) do
     {:ok, user} =
       attrs
       |> Enum.into(%{
         password: "some password",
-        username: "some username"
+        username: "some username",
+        role_id: role.id
       })
       |> Aerotransit.Accounts.create_user()
 

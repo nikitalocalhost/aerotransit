@@ -7,13 +7,19 @@ test:
     services:
         - postgres:latest
 
+    variables:
+        POSTGRES_DB: $POSTGRES_DB
+        POSTGRES_USER: $POSTGRES_USER
+        POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+        POSTGRES_HOST_AUTH_METHOD: trust
+
     before_script:
         - mix local.rebar --force
         - mix local.hex --force
         - mix deps.get
 
     script:
-        - mix test
+        - DATABASE_URL=ecto://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost/$POSTGRES_DB mix test
 
 docker-build:
     image: docker:latest

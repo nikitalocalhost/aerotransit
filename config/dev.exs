@@ -60,6 +60,7 @@ config :aerotransit, AerotransitWeb.Endpoint,
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
+      ~r"lib/aerotransit_web/schema/.*(ex)$",
       ~r"lib/aerotransit_web/(live|views)/.*(ex)$",
       ~r"lib/aerotransit_web/templates/.*(eex)$"
     ]

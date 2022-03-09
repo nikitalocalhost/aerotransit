@@ -79,16 +79,21 @@ defmodule Aerotransit.AccountsTest do
     end
 
     test "create_user/1 with valid data creates a user" do
+      role_attrs = %{name: "some name", priveleges: []}
+
+      assert {:ok, %Accounts.Role{} = role} = Accounts.create_role(role_attrs)
+      assert role.name == role_attrs.name
+      assert role.priveleges == role_attrs.priveleges
+
       valid_attrs = %{
+        username: "some username",
         password: "some password",
-        password_hash: "some password_hash",
-        username: "some username"
+        role_id: role.id
       }
 
       assert {:ok, %User{} = user} = Accounts.create_user(valid_attrs)
-      # assert user.password == "some password"
-      # assert user.password_hash == "some password_hash"
-      assert user.username == "some username"
+      assert user.username == valid_attrs.username
+      assert user.role_id == valid_attrs.role_id
     end
 
     test "create_user/1 with invalid data returns error changeset" do

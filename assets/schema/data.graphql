@@ -1,0 +1,143 @@
+query Data {
+	airports {
+		id
+		name
+		owner {
+			id
+			name
+		}
+		country {
+			id
+			name
+		}
+	}
+	cargos {
+		id
+		company {
+			id
+			name
+		}
+		type {
+			id
+			name
+		}
+		weight
+	}
+	companies {
+		id
+		name
+		government
+		country {
+			id
+			name
+		}
+		register
+	}
+
+	flights {
+		id
+		plane {
+			id
+			code
+		}
+		route {
+			id
+			from {
+				id
+				name
+			}
+			to {
+				id
+				name
+			}
+			duration
+		}
+	}
+
+	passengers {
+		id
+		fullName
+		passport
+		age
+		sex
+	}
+
+	planes {
+		id
+		type {
+			id
+			name
+		}
+		code
+		company {
+			id
+			name
+		}
+		airport {
+			id
+			name
+		}
+	}
+	routes {
+		id
+		duration
+		from {
+			id
+			name
+		}
+		to {
+			id
+			name
+		}
+	}
+}
+
+mutation SimulateUp {
+	simulateUp
+}
+
+mutation SimulateDown {
+	simulateDown
+}
+
+mutation CreateFlight($planeId: ID!, $routeId: ID!) {
+	createFlight(planeId: $planeId, routeId: $routeId) {
+		id
+	}
+}
+
+mutation CreateCargo($typeId: ID!, $companyId: ID!, $weight: Int!) {
+	createCargo(typeId: $typeId, companyId: $companyId, weight: $weight) {
+		id
+	}
+}
+
+mutation CreatePassenger(
+	$countryId: ID!
+	$fullName: String!
+	$passport: String!
+	$age: Int!
+	$sex: Boolean!
+) {
+	createPassenger(
+		countryId: $countryId
+		fullName: $fullName
+		passport: $passport
+		age: $age
+		sex: $sex
+	) {
+		id
+	}
+}
+
+mutation AddPassengerToFlight($id: ID!, $passengerId: ID!) {
+	addPassengerToFlight(id: $id, passengerId: $passengerId) {
+		id
+	}
+}
+
+mutation AddCargoToFlight($id: ID!, $cargoId: ID!) {
+	addCargoToFlight(id: $id, cargoId: $cargoId) {
+		id
+	}
+}

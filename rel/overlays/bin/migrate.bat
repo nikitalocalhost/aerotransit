@@ -1,0 +1,1 @@
+call "%~dp0\aerotransit" eval Aerotransit.Release.migrate

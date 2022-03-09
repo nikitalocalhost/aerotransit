@@ -14,6 +14,11 @@ defmodule AerotransitWeb.Router do
     plug :accepts, ["json"]
   end
 
+  scope "/api" do
+    pipe_through :api
+    forward "/graphql", Absinthe.Plug, schema: AerotransitWeb.Schema
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", AerotransitWeb do
   #   pipe_through :api

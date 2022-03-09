@@ -12,48 +12,62 @@ if System.get_env("PHX_SERVER") && System.get_env("RELEASE_NAME") do
   config :aerotransit, AerotransitWeb.Endpoint, server: true
 end
 
-if config_env() == :prod do
-  database_url =
-    System.get_env("DATABASE_URL") ||
-      raise """
-      environment variable DATABASE_URL is missing.
-      For example: ecto://USER:PASS@HOST/DATABASE
-      """
+case config_env() do
+  :prod ->
+    database_url =
+      System.get_env("DATABASE_URL") ||
+        raise """
+        environment variable DATABASE_URL is missing.
+        For example: ecto://USER:PASS@HOST/DATABASE
+        """
 
-  maybe_ipv6 = if System.get_env("ECTO_IPV6"), do: [:inet6], else: []
+    maybe_ipv6 = if System.get_env("ECTO_IPV6"), do: [:inet6], else: []
 
-  config :aerotransit, Aerotransit.Repo,
-    # ssl: true,
-    url: database_url,
-    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
-    socket_options: maybe_ipv6
+    config :aerotransit, Aerotransit.Repo,
+      # ssl: true,
+      url: database_url,
+      pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
+      socket_options: maybe_ipv6
 
-  # The secret key base is used to sign/encrypt cookies and other secrets.
-  # A default value is used in config/dev.exs and config/test.exs but you
-  # want to use a different value for prod and you most likely don't want
-  # to check this value into version control, so we use an environment
-  # variable instead.
-  secret_key_base =
-    System.get_env("SECRET_KEY_BASE") ||
-      raise """
-      environment variable SECRET_KEY_BASE is missing.
-      You can generate one by calling: mix phx.gen.secret
-      """
+    # The secret key base is used to sign/encrypt cookies and other secrets.
+    # A default value is used in config/dev.exs and config/test.exs but you
+    # want to use a different value for prod and you most likely don't want
+    # to check this value into version control, so we use an environment
+    # variable instead.
+    secret_key_base =
+      System.get_env("SECRET_KEY_BASE") ||
+        raise """
+        environment variable SECRET_KEY_BASE is missing.
+        You can generate one by calling: mix phx.gen.secret
+        """
 
-  host = System.get_env("PHX_HOST") || "example.com"
-  port = String.to_integer(System.get_env("PORT") || "4000")
+    host = System.get_env("PHX_HOST") || "example.com"
+    port = String.to_integer(System.get_env("PORT") || "4000")
 
-  config :aerotransit, AerotransitWeb.Endpoint,
-    url: [host: host, port: 443],
-    http: [
-      # Enable IPv6 and bind on all interfaces.
-      # Set it to  {0, 0, 0, 0, 0, 0, 0, 1} for local network only access.
-      # See the documentation on https://hexdocs.pm/plug_cowboy/Plug.Cowboy.html
-      # for details about using IPv6 vs IPv4 and loopback vs public addresses.
-      ip: {0, 0, 0, 0, 0, 0, 0, 0},
-      port: port
-    ],
-    secret_key_base: secret_key_base
+    config :aerotransit, AerotransitWeb.Endpoint,
+      url: [host: host, port: 443],
+      http: [
+        # Enable IPv6 and bind on all interfaces.
+        # Set it to  {0, 0, 0, 0, 0, 0, 0, 1} for local network only access.
+        # See the documentation on https://hexdocs.pm/plug_cowboy/Plug.Cowboy.html
+        # for details about using IPv6 vs IPv4 and loopback vs public addresses.
+        ip: {0, 0, 0, 0, 0, 0, 0, 0},
+        port: port
+      ],
+      secret_key_base: secret_key_base
+
+    key_pem =
+      System.get_env("KEY_PEM") ||
+        raise """
+        environment variable KEY_PEM is missing.
+        You can generate one by calling: openssl genrsa -out mykey.pem 4096
+        """
+
+    config :joken,
+      default_signer: [
+        signer_alg: "Ed25519",
+        key_pem: key_pem
+      ]
 
   # ## Using releases
   #
@@ -82,4 +96,13 @@ if config_env() == :prod do
   #     config :swoosh, :api_client, Swoosh.ApiClient.Hackney
   #
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
+  :test ->
+    database_url =
+      System.get_env("DATABASE_URL") ||
+        "ecto://postgres:postgres@localhost/aerotransit_test#{System.get_env("MIX_TEST_PARTITION")}"
+
+    config :aerotransit, Aerotransit.Repo, url: database_url
+
+  _ ->
+    nil
 end

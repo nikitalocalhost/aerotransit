@@ -6,15 +6,18 @@ import {
 	subscriptionExchange,
 	createClient,
 	dedupExchange,
-	cacheExchange,
 	fetchExchange
 } from 'urql'
 
+import { multipartFetchExchange } from '@urql/exchange-multipart-fetch'
+// import { cacheExchange } from '@urql/exchange-graphcache'
+
+// import schema from '@/schema'
+
+import { authExchange } from '@/lib/auth'
+
 const SERVER_URL =
 	import.meta.env.SERVER_URL || `${location.protocol}//${location.host}/`
-
-import { multipartFetchExchange } from '@urql/exchange-multipart-fetch'
-import { authExchange } from '@/lib/auth'
 
 const ENDPOINT_PATH = '/api/graphql'
 const SOCKET_PATH = '/socket'
@@ -75,7 +78,7 @@ export const client = createClient({
 	url: endpoint,
 	exchanges: [
 		dedupExchange,
-		cacheExchange,
+		// cacheExchange({ schema }),
 		authExchange,
 		multipartFetchExchange,
 		fetchExchange,

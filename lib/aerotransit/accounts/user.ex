@@ -43,7 +43,7 @@ defmodule Aerotransit.Accounts.User do
     |> put_change(:password, nil)
   end
 
-  defp put_pass_hash(changeset = %Ecto.Changeset{valid?: true, changes: %{password: password}}) do
+  defp put_pass_hash(%Ecto.Changeset{valid?: true, changes: %{password: password}} = changeset) do
     change(changeset, Argon2.add_hash(password))
   end
 

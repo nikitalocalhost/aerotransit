@@ -1,7 +1,0 @@
-.link {
-	@apply text-black;
-}
-
-.active {
-	@apply text-red-500;
-}

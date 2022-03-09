@@ -1,0 +1,7 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+mix format --check-formatted
+mix credo -a
+yarn lint-check
+#mix test

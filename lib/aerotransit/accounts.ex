@@ -67,7 +67,7 @@ defmodule Aerotransit.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_role(role = %Role{}, attrs) do
+  def update_role(%Role{} = role, attrs) do
     role
     |> Role.changeset(attrs)
     |> Repo.update()
@@ -85,7 +85,7 @@ defmodule Aerotransit.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_role(role = %Role{}) do
+  def delete_role(%Role{} = role) do
     Repo.delete(role)
   end
 
@@ -98,7 +98,7 @@ defmodule Aerotransit.Accounts do
       %Ecto.Changeset{data: %Role{}}
 
   """
-  def change_role(role = %Role{}, attrs \\ %{}) do
+  def change_role(%Role{} = role, attrs \\ %{}) do
     Role.changeset(role, attrs)
   end
 
@@ -141,13 +141,18 @@ defmodule Aerotransit.Accounts do
   ## Examples
 
       iex> get_user_by(username: "admin")
-      %User{}
+      {:ok, %User{}}
 
       iex> get_user_by(username: "qwerty")
-      nil
+      {:err, "Not found"}
 
   """
-  def get_user_by(params), do: Repo.get_by(User, params)
+  def get_user_by(params) do
+    case(Repo.get_by(User, params)) do
+      nil -> {:err, "Not found"}
+      data -> {:ok, data}
+    end
+  end
 
   @doc """
   Gets a single user.
@@ -168,18 +173,21 @@ defmodule Aerotransit.Accounts do
   @doc """
   Gets a single user.
 
-  Returns `nil` if the User does not exist.
-
   ## Examples
 
       iex> get_user(123)
-      %User{}
+      {:ok, %User{}}
 
       iex> get_user(456)
-      ** (Ecto.NoResultsError)
+      {:error, "Not found"}
 
   """
-  def get_user(id), do: Repo.get(User, id)
+  def get_user(id) do
+    case(Repo.get(User, id)) do
+      nil -> {:error, "Not found"}
+      data -> {:ok, data}
+    end
+  end
 
   @doc """
   Creates a user.
@@ -211,7 +219,7 @@ defmodule Aerotransit.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_user(user = %User{}, attrs) do
+  def update_user(%User{} = user, attrs) do
     user
     |> User.changeset(attrs)
     |> Repo.update()
@@ -229,7 +237,7 @@ defmodule Aerotransit.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_user(user = %User{}) do
+  def delete_user(%User{} = user) do
     Repo.delete(user)
   end
 
@@ -242,11 +250,11 @@ defmodule Aerotransit.Accounts do
       %Ecto.Changeset{data: %User{}}
 
   """
-  def change_user(user = %User{}, attrs \\ %{}) do
+  def change_user(%User{} = user, attrs \\ %{}) do
     User.changeset(user, attrs)
   end
 
-  def verify_user(user = %User{}, password) do
+  def verify_user(%User{} = user, password) do
     user
     |> Argon2.check_pass(password)
   end
@@ -268,18 +276,13 @@ defmodule Aerotransit.Accounts do
   end
 
   def user_auth(%{username: username, password: password}) do
-    case get_user_by(username: username) do
-      nil ->
+    with {:ok, user} <- get_user_by(username: username),
+         {:ok, _user} <- verify_user(user, password),
+         {:ok, tokens} <- user_generate_tokens(user) do
+      {:ok, %{user: user, tokens: tokens}}
+    else
+      _ ->
         {:error, "Password is wrong or user is not found"}
-
-      user ->
-        with {:ok, user} <- verify_user(user, password),
-             {:ok, tokens} <- user_generate_tokens(user) do
-          {:ok, %{user: user, tokens: tokens}}
-        else
-          _ ->
-            {:error, "Password is wrong or user is not found"}
-        end
     end
   end
 

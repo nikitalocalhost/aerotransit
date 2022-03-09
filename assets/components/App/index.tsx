@@ -1,12 +1,20 @@
 import { FC } from 'react'
 
+import { Container } from '@chakra-ui/react'
+
+import Navbar from '@/components/Navbar'
+
+import Routes from './routes'
+
 import Provider from './provider'
-import View from './view'
 
 export const App: FC = () => {
 	return (
 		<Provider>
-			<View />
+			<Navbar />
+			<Container maxW='container.lg'>
+				<Routes />
+			</Container>
 		</Provider>
 	)
 }

@@ -1,0 +1,34 @@
+fragment userFields on User {
+	id
+	username
+	role {
+		id
+		name
+		priveleges
+	}
+}
+
+mutation Login($username: String!, $password: String!) {
+	authorize(user: { username: $username, password: $password }) {
+		tokens {
+			token
+			refreshToken
+		}
+		user {
+			...userFields
+		}
+	}
+}
+
+mutation RefreshAuth($refreshToken: String!) {
+	refreshAuth(refreshToken: $refreshToken) {
+		token
+		refreshToken
+	}
+}
+
+query User($id: ID!) {
+	user(id: $id) {
+		...userFields
+	}
+}

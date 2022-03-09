@@ -102,4 +102,7 @@ case config_env() do
         "ecto://postgres:postgres@localhost/aerotransit_test#{System.get_env("MIX_TEST_PARTITION")}"
 
     config :aerotransit, Aerotransit.Repo, url: database_url
+
+  _ ->
+    nil
 end

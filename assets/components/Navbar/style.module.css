@@ -1,7 +1,0 @@
-.navbar {
-	@apply flex flex-row;
-}
-
-.logo {
-	@apply object-contain;
-}
